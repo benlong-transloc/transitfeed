@@ -16,7 +16,7 @@
 
 from __future__ import absolute_import
 import codecs
-import cStringIO as StringIO
+from io import StringIO
 import csv
 import os
 import re

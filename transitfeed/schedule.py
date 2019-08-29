@@ -16,7 +16,7 @@
 
 from __future__ import absolute_import
 import bisect
-import cStringIO as StringIO
+from io import StringIO
 import datetime
 import itertools
 import os
