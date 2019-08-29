@@ -26,8 +26,8 @@ from transitfeed import stop
 from transitfeed import util
 from transitfeed import version
 import unittest
-from urllib2 import HTTPError, URLError
-import urllib2
+from urllib3 import HTTPError, URLError
+import urllib3
 
 
 class ColorLuminanceTestCase(test_util.TestCase):
@@ -254,14 +254,14 @@ class NonNegIntStringToIntTestCase(test_util.TestCase):
 
 class CheckVersionTestCase(test_util.TempDirTestCaseBase):
   def setUp(self):
-    self.orig_urlopen = urllib2.urlopen
+    self.orig_urlopen = urllib3.urlopen
     self.mock = MockURLOpen()
     self.accumulator = test_util.RecordingProblemAccumulator(self)
     self.problems = ProblemReporter(self.accumulator)
 
   def tearDown(self):
     self.mock = None
-    urllib2.urlopen = self.orig_urlopen
+    urllib3.urlopen = self.orig_urlopen
 
   def testAssignedDifferentVersion(self):
     util.CheckVersion(self.problems, '100.100.100')
@@ -275,40 +275,40 @@ class CheckVersionTestCase(test_util.TempDirTestCaseBase):
     self.accumulator.AssertNoMoreExceptions()
 
   def testGetCorrectReturns(self):
-    urllib2.urlopen = self.mock.mockedConnectSuccess
+    urllib3.urlopen = self.mock.mockedConnectSuccess
     util.CheckVersion(self.problems)
     self.accumulator.PopException('NewVersionAvailable')
 
   def testPageNotFound(self):
-    urllib2.urlopen = self.mock.mockedPageNotFound
+    urllib3.urlopen = self.mock.mockedPageNotFound
     util.CheckVersion(self.problems)
     e = self.accumulator.PopException('OtherProblem')
     self.assertTrue(re.search(r'we failed to reach', e.description))
     self.assertTrue(re.search(r'Reason: Not Found \[404\]', e.description))
 
   def testConnectionTimeOut(self):
-    urllib2.urlopen = self.mock.mockedConnectionTimeOut
+    urllib3.urlopen = self.mock.mockedConnectionTimeOut
     util.CheckVersion(self.problems)
     e = self.accumulator.PopException('OtherProblem')
     self.assertTrue(re.search(r'we failed to reach', e.description))
     self.assertTrue(re.search(r'Reason: Connection timed', e.description))
 
   def testGetAddrInfoFailed(self):
-    urllib2.urlopen = self.mock.mockedGetAddrInfoFailed
+    urllib3.urlopen = self.mock.mockedGetAddrInfoFailed
     util.CheckVersion(self.problems)
     e = self.accumulator.PopException('OtherProblem')
     self.assertTrue(re.search(r'we failed to reach', e.description))
     self.assertTrue(re.search(r'Reason: Getaddrinfo failed', e.description))
 
   def testEmptyIsReturned(self):
-    urllib2.urlopen = self.mock.mockedEmptyIsReturned
+    urllib3.urlopen = self.mock.mockedEmptyIsReturned
     util.CheckVersion(self.problems)
     e = self.accumulator.PopException('OtherProblem')
     self.assertTrue(re.search(r'we had trouble parsing', e.description))
 
 
 class MockURLOpen:
-  """Pretend to be a urllib2.urlopen suitable for testing."""
+  """Pretend to be a urllib3.urlopen suitable for testing."""
   def mockedConnectSuccess(self, request):
     return StringIO.StringIO('latest_version=100.0.1')
 

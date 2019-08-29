@@ -17,7 +17,7 @@
 # Unit tests for the route module.
 from __future__ import absolute_import
 
-from StringIO import StringIO
+from io import StringIO
 from tests import util
 import transitfeed
 
