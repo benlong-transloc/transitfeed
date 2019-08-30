@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+from __future__ import absolute_import
 from .gtfsfactoryuser import GtfsFactoryUser
 
 class GtfsObjectBase(GtfsFactoryUser):
@@ -88,7 +88,7 @@ class GtfsObjectBase(GtfsFactoryUser):
     if id(self) == id(other):
       return True
 
-    for k in list(self.keys()).union(list(other.keys())):
+    for k in self.keys().union(other.keys()):
       # use __getitem__ which returns "" for missing columns values
       if self[k] != other[k]:
         return False
@@ -115,7 +115,7 @@ class GtfsObjectBase(GtfsFactoryUser):
     return columns
 
   def _ColumnNames(self):
-    return list(self.keys())
+    return self.keys()
 
   def AddToSchedule(self, schedule, problems):
     self._schedule = schedule
