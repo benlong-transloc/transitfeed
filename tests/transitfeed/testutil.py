@@ -18,7 +18,7 @@
 
 import datetime
 import re
-import StringIO
+from io import StringIO
 import tests.util as test_util
 from transitfeed import problems
 from transitfeed.problems import ProblemReporter
